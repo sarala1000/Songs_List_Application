@@ -20,8 +20,18 @@ class ApiService {
     try {
       const response = await axios.get<Song[]>('/songs');
       return response.data;
-    } catch (error) {
-      throw new Error('Failed to fetch songs from server');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new Error('Songs endpoint not found');
+        } else if (error.response && error.response.status >= 500) {
+          throw new Error('Server error occurred while fetching songs');
+        } else if (error.code === 'ECONNREFUSED') {
+          throw new Error('Cannot connect to server. Please check if backend is running');
+        }
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to fetch songs: ${errorMessage}`);
     }
   }
 
@@ -33,8 +43,18 @@ class ApiService {
     try {
       const response = await axios.post<UploadResponse>('/songs/import');
       return response.data;
-    } catch (error) {
-      throw new Error('Failed to import CSV file');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new Error('Import endpoint not found');
+        } else if (error.response && error.response.status >= 500) {
+          throw new Error('Server error occurred during import');
+        } else if (error.code === 'ECONNREFUSED') {
+          throw new Error('Cannot connect to server. Please check if backend is running');
+        }
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to import CSV file: ${errorMessage}`);
     }
   }
 
@@ -55,8 +75,20 @@ class ApiService {
       });
       
       return response.data;
-    } catch (error) {
-      throw new Error('Failed to upload CSV file');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) {
+          throw new Error('Invalid CSV file format');
+        } else if (error.response?.status === 413) {
+          throw new Error('File too large. Please choose a smaller file');
+        } else if (error.response && error.response.status >= 500) {
+          throw new Error('Server error occurred during upload');
+        } else if (error.code === 'ECONNREFUSED') {
+          throw new Error('Cannot connect to server. Please check if backend is running');
+        }
+      }
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to upload CSV file: ${errorMessage}`);
     }
   }
 

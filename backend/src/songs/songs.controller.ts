@@ -24,8 +24,9 @@ export class SongsController {
     try {
       return await this.songsService.findAll();
     } catch (error) {
+      console.error('Error fetching songs:', error);
       throw new HttpException(
-        'Failed to fetch songs',
+        `Failed to fetch songs: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -42,8 +43,9 @@ export class SongsController {
       const filePath = require('path').join(process.cwd(), 'src', 'song_list.csv');
       return await this.songsService.importCSV(filePath);
     } catch (error) {
+      console.error('Error importing CSV:', error);
       throw new HttpException(
-        'Failed to import CSV file',
+        `Failed to import CSV file: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -73,6 +75,7 @@ export class SongsController {
     try {
       return await this.songsService.loadCSV(file);
     } catch (error) {
+      console.error('Error processing CSV:', error);
       throw new HttpException(
         `Failed to process CSV file: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR

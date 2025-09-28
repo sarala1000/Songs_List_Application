@@ -60,3 +60,6 @@ docker-compose up --build
 ---
 
 **Built with ❤️ using modern web technologies**
+
+
+![App.img](assets/image.png)

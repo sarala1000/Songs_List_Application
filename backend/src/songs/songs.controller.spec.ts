@@ -15,18 +15,16 @@ describe('SongsController', () => {
   // Mock data
   const mockSongs = [
     {
-      id: '1',
-      band: 'The Beatles',
-      song: 'Hey Jude',
-      year: 1968,
-      created_at: '2024-01-01T00:00:00Z',
+      id: 1,
+      'Song Name': 'hey jude',
+      'Band': 'the beatles',
+      'Year': 1968,
     },
     {
-      id: '2',
-      band: 'Queen',
-      song: 'Bohemian Rhapsody',
-      year: 1975,
-      created_at: '2024-01-01T00:00:00Z',
+      id: 2,
+      'Song Name': 'bohemian rhapsody',
+      'Band': 'queen',
+      'Year': 1975,
     },
   ];
 
@@ -44,7 +42,7 @@ describe('SongsController', () => {
     const mockSongsService = {
       findAll: jest.fn(),
       importCSV: jest.fn(),
-      importSampleSongs: jest.fn(),
+      loadCSV: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -71,7 +69,7 @@ describe('SongsController', () => {
       service.findAll.mockResolvedValue(mockSongs);
 
       // Act
-      const result = await controller.findAll();
+      const result = await controller.getAll();
 
       // Assert
       expect(service.findAll).toHaveBeenCalledTimes(1);
@@ -83,30 +81,28 @@ describe('SongsController', () => {
       service.findAll.mockRejectedValue(new Error('Database connection failed'));
 
       // Act & Assert
-      await expect(controller.findAll()).rejects.toThrow('Database connection failed');
+      await expect(controller.getAll()).rejects.toThrow('Database connection failed');
     });
   });
 
   describe('uploadCSV', () => {
     it('should upload CSV file successfully', async () => {
       // Arrange
-      service.importCSV.mockResolvedValue(mockSongs);
+      service.loadCSV.mockResolvedValue({ message: 'Successfully uploaded songs' });
 
       // Act
       const result = await controller.uploadCSV(mockFile);
 
       // Assert
-      expect(service.importCSV).toHaveBeenCalledWith(mockFile.buffer.toString());
+      expect(service.loadCSV).toHaveBeenCalledWith(mockFile);
       expect(result).toEqual({
-        message: 'Songs uploaded successfully',
-        count: mockSongs.length,
-        songs: mockSongs,
+        message: 'Successfully uploaded songs',
       });
     });
 
     it('should throw BadRequestException when no file is provided', async () => {
       // Act & Assert
-      await expect(controller.uploadCSV(undefined)).rejects.toThrow(
+      await expect(controller.uploadCSV(undefined as any)).rejects.toThrow(
         BadRequestException
       );
     });
@@ -126,7 +122,7 @@ describe('SongsController', () => {
 
     it('should handle service errors during upload', async () => {
       // Arrange
-      service.importCSV.mockRejectedValue(new Error('CSV parsing failed'));
+      service.loadCSV.mockRejectedValue(new Error('CSV parsing failed'));
 
       // Act & Assert
       await expect(controller.uploadCSV(mockFile)).rejects.toThrow(
@@ -140,47 +136,19 @@ describe('SongsController', () => {
         ...mockFile,
         buffer: Buffer.from('band,song,year\n'),
       } as Express.Multer.File;
-      service.importCSV.mockResolvedValue([]);
+      service.loadCSV.mockResolvedValue({ message: 'Successfully uploaded 0 songs' });
 
       // Act
       const result = await controller.uploadCSV(emptyFile);
 
       // Assert
       expect(result).toEqual({
-        message: 'Songs uploaded successfully',
-        count: 0,
-        songs: [],
+        message: 'Successfully uploaded 0 songs',
       });
     });
   });
 
-  describe('importSampleSongs', () => {
-    it('should import sample songs successfully', async () => {
-      // Arrange
-      service.importSampleSongs.mockResolvedValue(mockSongs);
-
-      // Act
-      const result = await controller.importSampleSongs();
-
-      // Assert
-      expect(service.importSampleSongs).toHaveBeenCalledTimes(1);
-      expect(result).toEqual({
-        message: 'Sample songs imported successfully',
-        count: mockSongs.length,
-        songs: mockSongs,
-      });
-    });
-
-    it('should handle service errors during sample import', async () => {
-      // Arrange
-      service.importSampleSongs.mockRejectedValue(new Error('Sample import failed'));
-
-      // Act & Assert
-      await expect(controller.importSampleSongs()).rejects.toThrow(
-        'Sample import failed'
-      );
-    });
-  });
+  // UNUSED CODE - importSampleSongs method was removed from controller
 
   describe('file validation', () => {
     it('should accept valid CSV files', async () => {
@@ -190,14 +158,14 @@ describe('SongsController', () => {
         mimetype: 'text/csv',
         originalname: 'songs.csv',
       } as Express.Multer.File;
-      service.importCSV.mockResolvedValue(mockSongs);
+      service.loadCSV.mockResolvedValue({ message: 'Successfully uploaded songs' });
 
       // Act
       const result = await controller.uploadCSV(validFile);
 
       // Assert
       expect(result).toBeDefined();
-      expect(result.count).toBe(mockSongs.length);
+      expect(result.message).toBe('Successfully uploaded songs');
     });
 
     it('should accept CSV files with different extensions', async () => {
@@ -207,7 +175,7 @@ describe('SongsController', () => {
         mimetype: 'text/csv',
         originalname: 'songs.txt',
       } as Express.Multer.File;
-      service.importCSV.mockResolvedValue(mockSongs);
+      service.loadCSV.mockResolvedValue({ message: 'Successfully uploaded songs' });
 
       // Act
       const result = await controller.uploadCSV(csvFile);
@@ -234,34 +202,17 @@ describe('SongsController', () => {
   describe('response formatting', () => {
     it('should format upload response correctly', async () => {
       // Arrange
-      service.importCSV.mockResolvedValue(mockSongs);
+      service.loadCSV.mockResolvedValue({ message: 'Successfully uploaded songs' });
 
       // Act
       const result = await controller.uploadCSV(mockFile);
 
       // Assert
       expect(result).toHaveProperty('message');
-      expect(result).toHaveProperty('count');
-      expect(result).toHaveProperty('songs');
-      expect(result.message).toBe('Songs uploaded successfully');
-      expect(result.count).toBe(mockSongs.length);
-      expect(result.songs).toEqual(mockSongs);
+      expect(result.message).toBe('Successfully uploaded songs');
     });
 
-    it('should format sample import response correctly', async () => {
-      // Arrange
-      service.importSampleSongs.mockResolvedValue(mockSongs);
-
-      // Act
-      const result = await controller.importSampleSongs();
-
-      // Assert
-      expect(result).toHaveProperty('message');
-      expect(result).toHaveProperty('count');
-      expect(result).toHaveProperty('songs');
-      expect(result.message).toBe('Sample songs imported successfully');
-      expect(result.count).toBe(mockSongs.length);
-      expect(result.songs).toEqual(mockSongs);
-    });
+    // UNUSED CODE - importSampleSongs method was removed from controller
   });
 });
+

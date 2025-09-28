@@ -6,7 +6,6 @@ import SongsTable from './components/SongsTable';
 import LoadingSpinner from './components/LoadingSpinner';
 import Notification from './components/Notification';
 import { useSongOperations } from './hooks/useSongs';
-import { useNotifications } from './hooks/useNotifications';
 import { useUIState } from './hooks/useUIState';
 
 const App: React.FC = () => {
@@ -21,12 +20,26 @@ const App: React.FC = () => {
     refetch,
   } = useSongOperations();
 
-  const {
-    notification,
-    showSuccess,
-    showError,
-    hideNotification,
-  } = useNotifications();
+  const [notification, setNotification] = React.useState({
+    type: 'success' as 'success' | 'error' | 'info',
+    message: '',
+    isVisible: false,
+  });
+
+  const showSuccess = (message: string) => {
+    setNotification({ type: 'success', message, isVisible: true });
+    setTimeout(() => {
+      setNotification(prev => ({ ...prev, isVisible: false }));
+    }, 3000);
+  };
+
+  const showError = (error: string) => {
+    setNotification({ type: 'error', message: error, isVisible: true });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({ ...prev, isVisible: false }));
+  };
 
   const {
     isGridView,
@@ -234,6 +247,7 @@ const App: React.FC = () => {
         message={notification.message}
         isVisible={notification.isVisible}
         onClose={hideNotification}
+        duration={5000}
       />
 
       <motion.footer

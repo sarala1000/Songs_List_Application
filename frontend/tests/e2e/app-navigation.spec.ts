@@ -182,3 +182,4 @@ Queen,Bohemian Rhapsody,1975`;
     await expect(page.getByText('Queen')).toBeVisible();
   });
 });
+

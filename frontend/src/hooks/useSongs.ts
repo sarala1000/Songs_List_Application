@@ -12,7 +12,7 @@ export const songKeys = {
 } as const;
 
 /**
- * 🚀 Custom hook for fetching songs with React Query
+ * Custom hook for fetching songs with React Query
  * Features:
  * - Automatic caching
  * - Background refetching
@@ -37,7 +37,7 @@ export const useSongs = () => {
 };
 
 /**
- * 🔥 Custom hook for backend health check
+ * Custom hook for backend health check
  * Features:
  * - Automatic retry with exponential backoff
  * - Short stale time for real-time status
@@ -55,7 +55,7 @@ export const useBackendHealth = () => {
 };
 
 /**
- * 🎵 Custom hook for CSV upload with optimistic updates
+ * Custom hook for CSV upload with optimistic updates
  * Features:
  * - Optimistic updates
  * - Automatic cache invalidation
@@ -101,7 +101,7 @@ export const useUploadCSV = () => {
 };
 
 /**
- * 📥 Custom hook for importing sample songs
+ * Custom hook for importing sample songs
  * Features:
  * - Optimistic updates
  * - Cache invalidation
@@ -139,7 +139,7 @@ export const useRefreshSongs = () => {
 };
 
 /**
- * 🎯 Combined hook for all song operations
+ * Combined hook for all song operations
  * This is the main hook that components should use
  */
 export const useSongOperations = () => {
@@ -180,3 +180,4 @@ export const useSongOperations = () => {
     invalidate: () => queryClient.invalidateQueries({ queryKey: songKeys.lists() }),
   };
 };
+

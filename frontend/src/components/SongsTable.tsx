@@ -16,7 +16,7 @@ type SortField = 'Song Name' | 'Band' | 'Year';
 type SortDirection = 'asc' | 'desc';
 
 /**
- * 🚀 Advanced songs table with React Query optimization
+ * Advanced songs table with React Query optimization
  * Features:
  * - Sorting and filtering
  * - Grid/List view modes
@@ -173,7 +173,7 @@ const SongsTable: React.FC<SongsTableProps> = ({
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ delay: index * 0.003, duration: 0.03 }}
                 className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors duration-200 border border-white/10"
               >
                 <div className="space-y-2">
@@ -235,7 +235,7 @@ const SongsTable: React.FC<SongsTableProps> = ({
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
-                    transition={{ delay: index * 0.05 }}
+                    transition={{ delay: index * 0.003, duration: 0.03 }}
                     className="border-b border-white/10 hover:bg-white/5 transition-colors duration-200"
                   >
                     <td className="py-4 px-2">

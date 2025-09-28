@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 
 /**
- * 🎯 UI State interface for global UI management
+ * UI State interface for global UI management
  */
 interface UIState {
   isUploadModalOpen: boolean;
@@ -12,7 +12,7 @@ interface UIState {
 }
 
 /**
- * 🚀 Custom hook for managing global UI state
+ * Custom hook for managing global UI state
  * Features:
  * - Centralized UI state management
  * - Persistent settings (localStorage)
@@ -129,3 +129,4 @@ export const useUIState = () => {
     resetUIState,
   };
 };
+

@@ -32,6 +32,17 @@ const Notification: React.FC<NotificationProps> = ({
     }
   }, [isVisible, duration, onClose]);
 
+  // Force re-render when notification changes
+  useEffect(() => {
+    if (isVisible && duration > 0) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, duration);
+
+      return () => clearTimeout(timer);
+    }
+  }, [message, type, isVisible, duration, onClose]);
+
   const getIcon = () => {
     switch (type) {
       case 'success':

@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { NotificationType } from '../components/Notification';
 
 /**
- * 🎯 Notification state interface
+ * Notification state interface
  */
 interface NotificationState {
   type: NotificationType;
@@ -12,7 +12,7 @@ interface NotificationState {
 }
 
 /**
- * 🚀 Custom hook for managing notifications
+ * Custom hook for managing notifications
  * Features:
  * - Type-safe notifications
  * - Auto-dismiss functionality
@@ -88,3 +88,4 @@ export const useNotifications = () => {
     showLoading,
   };
 };
+

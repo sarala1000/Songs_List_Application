@@ -39,7 +39,7 @@ export class SongsController {
   async importCSV(): Promise<{ message: string }> {
     try {
       // Default CSV file path - you can change this
-      const filePath = require('path').join(__dirname, '..', '..', 'src', 'song_list.csv');
+      const filePath = require('path').join(process.cwd(), 'src', 'song_list.csv');
       return await this.songsService.importCSV(filePath);
     } catch (error) {
       throw new HttpException(

@@ -14,7 +14,7 @@ interface FileUploadProps {
 }
 
 /**
- * 🚀 Advanced file upload component with React Query optimization
+ * Advanced file upload component with React Query optimization
  * Features:
  * - Drag & drop functionality
  * - Optimistic updates
@@ -31,11 +31,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
 }) => {
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
   
-  // 🎯 React Query hooks
+  // React Query hooks
   const uploadMutation = useUploadCSV();
   const importMutation = useImportSampleSongs();
 
-  // 🎵 Handle file drop with React Query
+  // Handle file drop with React Query
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (!file) return;
@@ -53,10 +53,20 @@ const FileUpload: React.FC<FileUploadProps> = ({
       onSuccess: (response) => {
         setUploadStatus('success');
         onUploadSuccess(response.message);
+        
+        // Reset status after showing success for 2 seconds
+        setTimeout(() => {
+          setUploadStatus('idle');
+        }, 2000);
       },
       onError: (error) => {
         setUploadStatus('error');
         onUploadError(error instanceof Error ? error.message : 'Upload failed');
+        
+        // Reset status after showing error for 3 seconds
+        setTimeout(() => {
+          setUploadStatus('idle');
+        }, 3000);
       }
     });
   }, [onUploadSuccess, onUploadError, uploadMutation]);
@@ -71,7 +81,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     disabled: uploadMutation.isPending || externalIsUploading
   });
 
-  // 🎯 Handle import sample songs with React Query
+  // Handle import sample songs with React Query
   const handleImportStatic = useCallback(() => {
     setUploadStatus('idle');
     
@@ -79,15 +89,25 @@ const FileUpload: React.FC<FileUploadProps> = ({
       onSuccess: (response) => {
         setUploadStatus('success');
         onImportSuccess?.(response.message);
+        
+        // Reset status after showing success for 2 seconds
+        setTimeout(() => {
+          setUploadStatus('idle');
+        }, 2000);
       },
       onError: (error) => {
         setUploadStatus('error');
         onImportError?.(error instanceof Error ? error.message : 'Import failed');
+        
+        // Reset status after showing error for 3 seconds
+        setTimeout(() => {
+          setUploadStatus('idle');
+        }, 3000);
       }
     });
   }, [importMutation, onImportSuccess, onImportError]);
 
-  // 🎯 Combined loading states
+  // Combined loading states
   const isUploading = uploadMutation.isPending || externalIsUploading;
   const isImporting = importMutation.isPending || externalIsImporting;
 

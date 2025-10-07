@@ -12,7 +12,7 @@ interface SongsTableProps {
   onYearsChange?: (years: string[]) => void;
 }
 
-type SortField = 'Song Name' | 'Band' | 'Year';
+type SortField = 'song_name' | 'band_name' | 'year';
 type SortDirection = 'asc' | 'desc';
 
 /**
@@ -30,7 +30,7 @@ const SongsTable: React.FC<SongsTableProps> = ({
   selectedYears = [],
   onYearsChange = () => {}
 }) => {
-  const [sortField, setSortField] = useState<SortField>('Band');
+  const [sortField, setSortField] = useState<SortField>('band_name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -38,8 +38,8 @@ const SongsTable: React.FC<SongsTableProps> = ({
   const processedSongs = useMemo(() => {
     let filtered = songs.filter(song => {
       const matchesSearch = 
-        song['Song Name'].toLowerCase().includes(searchTerm.toLowerCase()) ||
-        song.Band.toLowerCase().includes(searchTerm.toLowerCase());
+        song.song_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        song.band_name.toLowerCase().includes(searchTerm.toLowerCase());
       
       return matchesSearch;
     });
@@ -180,16 +180,16 @@ const SongsTable: React.FC<SongsTableProps> = ({
                   <div className="flex items-center space-x-2">
                     <Music className="w-4 h-4 text-primary-400" />
                     <h3 className="font-medium text-white truncate">
-                      {song['Song Name']}
+                      {song.song_name}
                     </h3>
                   </div>
                   <div className="flex items-center space-x-2 text-white/80">
                     <Users className="w-4 h-4" />
-                    <span className="text-sm truncate">{song.Band}</span>
+                    <span className="text-sm truncate">{song.band_name}</span>
                   </div>
                   <div className="flex items-center space-x-2 text-white/60">
                     <Calendar className="w-4 h-4" />
-                    <span className="text-sm">{song.Year || 'N/A'}</span>
+                    <span className="text-sm">{song.year || 'N/A'}</span>
                   </div>
                 </div>
               </motion.div>
@@ -202,7 +202,7 @@ const SongsTable: React.FC<SongsTableProps> = ({
             <thead>
               <tr className="border-b border-white/20">
                 <th className="text-left py-4 px-2 font-semibold text-white/80">
-                  <SortButton field="Song Name">
+                  <SortButton field="song_name">
                     <div className="flex items-center space-x-2">
                       <Music className="w-4 h-4" />
                       <span>Song Name</span>
@@ -210,7 +210,7 @@ const SongsTable: React.FC<SongsTableProps> = ({
                   </SortButton>
                 </th>
                 <th className="text-left py-4 px-2 font-semibold text-white/80">
-                  <SortButton field="Band">
+                  <SortButton field="band_name">
                     <div className="flex items-center space-x-2">
                       <Users className="w-4 h-4" />
                       <span>Band</span>
@@ -218,7 +218,7 @@ const SongsTable: React.FC<SongsTableProps> = ({
                   </SortButton>
                 </th>
                 <th className="text-left py-4 px-2 font-semibold text-white/80">
-                  <SortButton field="Year">
+                  <SortButton field="year">
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-4 h-4" />
                       <span>Year</span>
@@ -240,17 +240,17 @@ const SongsTable: React.FC<SongsTableProps> = ({
                   >
                     <td className="py-4 px-2">
                       <div className="font-medium text-white">
-                        {song['Song Name']}
+                        {song.song_name}
                       </div>
                     </td>
                     <td className="py-4 px-2">
                       <div className="text-white/80">
-                        {song.Band}
+                        {song.band_name}
                       </div>
                     </td>
                     <td className="py-4 px-2">
                       <div className="text-white/60">
-                        {song.Year || 'N/A'}
+                        {song.year || 'N/A'}
                       </div>
                     </td>
                   </motion.tr>

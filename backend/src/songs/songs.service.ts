@@ -3,12 +3,15 @@ import { SupabaseService } from '../supabase/supabase.service';
 import csv from 'csv-parser';
 import * as fs from 'fs';
 
-// Song interface for Supabase (matching the actual table structure)
+/**
+ * Song interface for Supabase (matching the actual table structure)
+ * Using snake_case to match PostgreSQL conventions
+ */
 export interface Song {
   id?: number;
-  'Song Name': string;
-  Band: string;
-  Year?: number;
+  song_name: string;
+  band_name: string;
+  year?: number;
 }
 
 @Injectable()
@@ -23,9 +26,9 @@ export class SongsService {
     try {
       const { data, error } = await this.supabaseService
         .getClient()
-        .from('songs')
+        .from('song')
         .select('*')
-        .order('Band', { ascending: true });
+        .order('band_name', { ascending: true });
 
       if (error) {
         throw new Error(`Database error: ${error.message}`);
@@ -49,16 +52,16 @@ export class SongsService {
       fs.createReadStream(filePath)
         .pipe(csv())
         .on('data', (row) => {
-          // Process CSV with exact column names: Song Name, Band, Year
-          // Handle both comma and semicolon delimited files
+          // Process CSV with column names: Song Name, Band, Year
+          // Map CSV headers to database column names (snake_case)
           const song: Song = {
-            'Song Name': (row['Song Name'] || row['Song Name;Band;Year']?.split(';')[0])?.toLowerCase().trim() || '',
-            Band: (row['Band'] || row['Song Name;Band;Year']?.split(';')[1])?.toLowerCase().trim() || '',
-            Year: parseInt(row['Year'] || row['Song Name;Band;Year']?.split(';')[2]) || new Date().getFullYear(),
+            song_name: (row['Song Name'] || row['Song Name;Band;Year']?.split(';')[0])?.toLowerCase().trim() || '',
+            band_name: (row['Band'] || row['Song Name;Band;Year']?.split(';')[1])?.toLowerCase().trim() || '',
+            year: parseInt(row['Year'] || row['Song Name;Band;Year']?.split(';')[2]) || new Date().getFullYear(),
           };
 
           // Only add if required fields are present
-          if (song['Song Name'] && song.Band) {
+          if (song.song_name && song.band_name) {
             songs.push(song);
           }
         })
@@ -71,7 +74,7 @@ export class SongsService {
 
             const { error } = await this.supabaseService
               .getClient()
-              .from('songs')
+              .from('song')
               .insert(songs);
 
             if (error) {
@@ -115,13 +118,13 @@ export class SongsService {
             
             if (values.length >= 3) {
               const song: Song = {
-                'Song Name': values[0]?.toLowerCase().trim() || '',
-                Band: values[1]?.toLowerCase().trim() || '',
-                Year: parseInt(values[2]) || new Date().getFullYear(),
+                song_name: values[0]?.toLowerCase().trim() || '',
+                band_name: values[1]?.toLowerCase().trim() || '',
+                year: parseInt(values[2]) || new Date().getFullYear(),
               };
 
               // Only add if required fields are present
-              if (song['Song Name'] && song.Band) {
+              if (song.song_name && song.band_name) {
                 songs.push(song);
               }
             }
@@ -143,7 +146,7 @@ export class SongsService {
         try {
           const { error } = await this.supabaseService
             .getClient()
-            .from('songs')
+            .from('song')
             .insert(songs);
 
           if (error) {

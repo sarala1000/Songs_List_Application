@@ -1,11 +1,12 @@
 /**
  * Song interface matching the backend API structure
+ * Using snake_case to match PostgreSQL conventions
  */
 export interface Song {
   id?: number;
-  'Song Name': string;
-  Band: string;
-  Year?: number;
+  song_name: string;
+  band_name: string;
+  year?: number;
 }
 
 /**

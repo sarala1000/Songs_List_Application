@@ -1,13 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, ChevronDown, Sparkles, Check, Filter } from 'lucide-react';
-
-interface Song {
-  id?: number;
-  'Song Name': string;
-  Band: string;
-  Year?: number;
-}
+import { Song } from '../types/song';
 
 interface YearFilterProps {
   songs: Song[];
@@ -29,7 +23,7 @@ const YearFilter: React.FC<YearFilterProps> = ({
   // Extract unique years from songs and create filter options
   const yearOptions = useMemo(() => {
     const years = songs
-      .map(song => song.Year)
+      .map(song => song.year)
       .filter((year): year is number => year !== undefined && year > 0)
       .sort((a, b) => b - a); // Sort descending (newest first)
 
@@ -39,7 +33,7 @@ const YearFilter: React.FC<YearFilterProps> = ({
     return uniqueYears.map(year => ({
       value: year.toString(),
       label: year.toString(),
-      count: songs.filter(song => song.Year === year).length
+      count: songs.filter(song => song.year === year).length
     }));
   }, [songs]);
 

@@ -3,13 +3,19 @@ import { Song, UploadResponse } from '../types/song';
 
 /**
  * API service for communicating with the backend
+ * Uses environment variable for flexible configuration
  */
 class ApiService {
-  private baseURL = 'http://localhost:3000';
+  private baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
   constructor() {
     axios.defaults.baseURL = this.baseURL;
     axios.defaults.timeout = 10000;
+    
+    // Log API URL in development
+    if (import.meta.env.DEV) {
+      console.log('🔗 API Base URL:', this.baseURL);
+    }
   }
 
   /**

@@ -26,7 +26,7 @@ export class SongsService {
     try {
       const { data, error } = await this.supabaseService
         .getClient()
-        .from('song')
+        .from('songs')
         .select('*')
         .order('band_name', { ascending: true });
 
@@ -74,7 +74,7 @@ export class SongsService {
 
             const { error } = await this.supabaseService
               .getClient()
-              .from('song')
+              .from('songs')
               .insert(songs);
 
             if (error) {
@@ -146,7 +146,7 @@ export class SongsService {
         try {
           const { error } = await this.supabaseService
             .getClient()
-            .from('song')
+            .from('songs')
             .insert(songs);
 
           if (error) {

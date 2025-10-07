@@ -87,7 +87,7 @@ Queen,Bohemian Rhapsody,1975`;
       // Assert
       expect(mockClient.from).toHaveBeenCalledWith('songs');
       expect(mockQuery.select).toHaveBeenCalledWith('*');
-      expect(mockQuery.order).toHaveBeenCalledWith('Band', { ascending: true });
+      expect(mockQuery.order).toHaveBeenCalledWith('band_name', { ascending: true });
       expect(result).toEqual(mockSongs);
     });
 
@@ -141,7 +141,7 @@ Queen,Bohemian Rhapsody,1975`;
 
     it('should handle empty CSV data', async () => {
       // Arrange
-      const emptyCsv = 'Song Name,Band,Year\n';
+      const emptyCsv = 'Song Name,Band,Year\n'; // CSV headers stay the same
 
       // Act & Assert
       await expect(service.importCSV('empty.csv')).rejects.toThrow('No valid songs found');
@@ -240,9 +240,9 @@ Queen,Bohemian Rhapsody,1975`;
       // Assert
       expect(mockInsert).toHaveBeenCalledWith([
         {
-          'Song Name': 'the beatles',
-          Band: 'hey jude',
-          Year: 1968,
+          song_name: 'the beatles',
+          band_name: 'hey jude',
+          year: 1968,
         },
       ]);
     });
@@ -271,9 +271,9 @@ Queen,Bohemian Rhapsody,1975`;
       // Assert
       expect(mockInsert).toHaveBeenCalledWith([
         {
-          'Song Name': 'ac/dc',
-          Band: 'highway to hell',
-          Year: 1979,
+          song_name: 'ac/dc',
+          band_name: 'highway to hell',
+          year: 1979,
         },
       ]);
     });

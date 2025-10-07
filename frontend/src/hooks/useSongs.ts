@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiService } from '../services/api';
-import { Song, UploadResponse } from '../types/song';
+import { Song } from '../types/song';
 
 /**
  * Query keys for consistent cache management
@@ -27,8 +27,11 @@ export const useSongs = () => {
     gcTime: 10 * 60 * 1000, // 10 minutes
     retry: (failureCount, error) => {
       // Don't retry on 4xx errors
-      if (error?.response?.status >= 400 && error?.response?.status < 500) {
-        return false;
+      if (error && typeof error === 'object' && 'response' in error) {
+        const httpError = error as { response: { status: number } };
+        if (httpError.response.status >= 400 && httpError.response.status < 500) {
+          return false;
+        }
       }
       return failureCount < 3;
     },
@@ -78,24 +81,26 @@ export const useUploadCSV = () => {
         // Add a temporary optimistic song entry
         const optimisticSong: Song = {
           id: Date.now(), // Temporary ID
-          'Song Name': file.name.replace('.csv', ''),
-          Band: 'Uploading...',
-          Year: new Date().getFullYear(),
+          song_name: file.name.replace('.csv', ''),
+          band_name: 'Uploading...',
+          year: new Date().getFullYear(),
         };
         return old ? [...old, optimisticSong] : [optimisticSong];
       });
 
       return { previousSongs };
     },
-    onError: (err, file, context) => {
+    onError: (_err, _file, context) => {
       // Rollback on error
       if (context?.previousSongs) {
         queryClient.setQueryData(songKeys.lists(), context.previousSongs);
       }
     },
     onSuccess: () => {
-      // Invalidate and refetch songs after successful upload
+      // Force immediate refetch after successful upload
       queryClient.invalidateQueries({ queryKey: songKeys.lists() });
+      // Also refetch immediately to ensure UI updates
+      queryClient.refetchQueries({ queryKey: songKeys.lists() });
     },
   });
 };
@@ -113,8 +118,10 @@ export const useImportSampleSongs = () => {
   return useMutation({
     mutationFn: () => apiService.importCSV(),
     onSuccess: () => {
-      // Invalidate and refetch songs after successful import
+      // Force immediate refetch after successful import
       queryClient.invalidateQueries({ queryKey: songKeys.lists() });
+      // Also refetch immediately to ensure UI updates
+      queryClient.refetchQueries({ queryKey: songKeys.lists() });
     },
   });
 };
@@ -143,6 +150,7 @@ export const useRefreshSongs = () => {
  * This is the main hook that components should use
  */
 export const useSongOperations = () => {
+  const queryClient = useQueryClient();
   const songsQuery = useSongs();
   const healthQuery = useBackendHealth();
   const uploadMutation = useUploadCSV();

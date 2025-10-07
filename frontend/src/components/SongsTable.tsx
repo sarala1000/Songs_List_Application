@@ -37,9 +37,13 @@ const SongsTable: React.FC<SongsTableProps> = ({
   // Sort and filter songs
   const processedSongs = useMemo(() => {
     let filtered = songs.filter(song => {
+      // Safe access with fallbacks for undefined values
+      const songName = song.song_name || '';
+      const bandName = song.band_name || '';
+      
       const matchesSearch = 
-        song.song_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        song.band_name.toLowerCase().includes(searchTerm.toLowerCase());
+        songName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        bandName.toLowerCase().includes(searchTerm.toLowerCase());
       
       return matchesSearch;
     });
@@ -180,12 +184,12 @@ const SongsTable: React.FC<SongsTableProps> = ({
                   <div className="flex items-center space-x-2">
                     <Music className="w-4 h-4 text-primary-400" />
                     <h3 className="font-medium text-white truncate">
-                      {song.song_name}
+                      {song.song_name || 'Unknown'}
                     </h3>
                   </div>
                   <div className="flex items-center space-x-2 text-white/80">
                     <Users className="w-4 h-4" />
-                    <span className="text-sm truncate">{song.band_name}</span>
+                    <span className="text-sm truncate">{song.band_name || 'Unknown'}</span>
                   </div>
                   <div className="flex items-center space-x-2 text-white/60">
                     <Calendar className="w-4 h-4" />
@@ -240,12 +244,12 @@ const SongsTable: React.FC<SongsTableProps> = ({
                   >
                     <td className="py-4 px-2">
                       <div className="font-medium text-white">
-                        {song.song_name}
+                        {song.song_name || 'Unknown'}
                       </div>
                     </td>
                     <td className="py-4 px-2">
                       <div className="text-white/80">
-                        {song.band_name}
+                        {song.band_name || 'Unknown'}
                       </div>
                     </td>
                     <td className="py-4 px-2">

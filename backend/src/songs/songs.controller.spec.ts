@@ -16,15 +16,15 @@ describe('SongsController', () => {
   const mockSongs = [
     {
       id: 1,
-      'Song Name': 'hey jude',
-      'Band': 'the beatles',
-      'Year': 1968,
+      song_name: 'hey jude',
+      band_name: 'the beatles',
+      year: 1968,
     },
     {
       id: 2,
-      'Song Name': 'bohemian rhapsody',
-      'Band': 'queen',
-      'Year': 1975,
+      song_name: 'bohemian rhapsody',
+      band_name: 'queen',
+      year: 1975,
     },
   ];
 
